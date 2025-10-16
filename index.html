@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1. Mátészalkai SzakmaFeszt</title>
+  <style>
+    /* ====== SÖTÉT TÉMA ====== */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #121212;
+      color: #e0e0e0;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background: linear-gradient(90deg, #003366, #004a99);
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    header h1 {
+      margin: 0.5rem 0;
+      font-size: 2rem;
+    }
+    header p.motto {
+      font-style: italic;
+      font-size: 1.2rem;
+      margin: 0 0 1rem 0;
+      color: #b3d9ff;
+    }
+
+    /* ====== SLIDESHOW ====== */
+    .slideshow {
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    }
+    .slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .slides img {
+      width: 100%;
+      flex-shrink: 0;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .nav-buttons button {
+      background: rgba(20,20,20,0.6);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      pointer-events: auto;
+      padding: 0 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .nav-buttons button:hover {
+      background: rgba(50,50,50,0.9);
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    /* ====== RENDEZVÉNY CÉLJA ====== */
+    #cel {
+      background: #1e1e1e;
+      padding: 1rem 2rem;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      border-left: 4px solid #1976d2;
+    }
+
+    /* ====== ALAPRAJZ ====== */
+    #alaprajz {
+      position: relative;
+      text-align: center;
+    }
+
+    #alaprajz img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid #1976d2;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    .tooltip {
+      position: absolute;
+      background: rgba(25,118,210,0.95);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      pointer-events: none;
+      white-space: nowrap;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    /* ====== CÉGKÁRTYÁK ====== */
+    #ceglista {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .cegcard {
+      background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+      width: 320px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .cegcard:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px rgba(25,118,210,0.6);
+    }
+
+    .cegcard img.logo {
+      max-width: 120px;
+      height: auto;
+      margin-bottom: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #333;
+      object-fit: contain;
+      background: #222;
+    }
+
+    .cegcard h3 {
+      margin: 0.4rem 0 0.6rem 0;
+      font-size: 1.3rem;
+      text-align: center;
+      color: #64b5f6;
+    }
+
+    .cegcard p {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #ccc;
+    }
+
+    /* ====== MINI MENÜ ====== */
+    .mini-menu {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .mini-menu button {
+      cursor: pointer;
+      background-color: #1976d2;
+      border: none;
+      color: white;
+      padding: 0.4rem 0.7rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .mini-menu button:hover {
+      background-color: #0d47a1;
+      transform: scale(1.05);
+    }
+
+    /* ====== LIGHTBOX ====== */
+    #szorolap-lightbox,
+    #stand-lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #szorolap-lightbox img,
+    #stand-lightbox img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 25px rgba(25,118,210,0.8);
+    }
+
+    #szorolap-lightbox.active,
+    #stand-lightbox.active {
+      display: flex;
+    }
+
+    /* ====== GOMBOK ====== */
+    .back-btn {
+      margin-top: 1rem;
+      cursor: pointer;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .back-btn:hover {
+      background-color: #0d47a1;
+      transform: scale(1.05);
+    }
+
+    /* ====== TÉRKÉP ====== */
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 500px;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+    }
+
+    .map-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="%23181818"/><path d="M0,0L100,100M100,0L0,100" stroke="%23333333" stroke-width="0.5"/></svg>');
+      opacity: 0.3;
+    }
+
+    .company-marker {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #1976d2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .company-marker:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(25,118,210,0.7);
+    }
+
+    .company-info {
+      position: absolute;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+      z-index: 100;
+      max-width: 250px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      color: #eee;
+    }
+
+    .company-info.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .company-info h3 {
+      margin-bottom: 8px;
+      color: #64b5f6;
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 768px) {
+      #ceglista {
+        flex-direction: column;
+        align-items: center;
+      }
+      .cegcard {
+        width: 90%;
+      }
+      .slideshow .slides img {
+        height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Üdvözlünk az 1. Mátészalkai SzakmaFeszt oldalán!  Veszély villogó fények</h1>
+  <p class="motto">„A jövő szakemberei Mátészalkáról indulnak”</p>
+
+  <div class="slideshow" aria-label="Rendezvény képei">
+    <div class="slides" id="slides">
+      <img src="images/Színpad1.jpg" alt="Rendezvény hangulatkép 1" />
+      <img src="images/Tömeg3.jpg" alt="Rendezvény hangulatkép 2" />
+    </div>
+    <div class="nav-buttons">
+      <button id="prev" aria-label="Előző kép">&#10094;</button>
+      <button id="next" aria-label="Következő kép">&#10095;</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="cel" aria-labelledby="cel-title">
+    <h2 id="cel-title">A rendezvény célja</h2>
+    <p>
+      A SzakmaFeszt célja, hogy a térség meghatározó vállalkozásait, munkaadóit és szakmáit bemutassa az érdeklődőknek, elsősorban fiataloknak és álláskeresőknek.
+    </p>
+  </section>
+
+  <section id="alaprajz" aria-labelledby="alaprajz-title">
+    <h2 id="alaprajz-title">Alaprajz</h2>
+    <div>
+      <section>
+        <h2>Kiállító térkép</h2>
+        <div class="map-container">
+            <div class="map-background"></div>
+            <div class="company-marker" style="top: 15%; left: 30%;"  data-company="1">DÉ</div>
+            <div class="company-marker" style="top: 15%; left: 40%;"  data-company="2">GÉ</div>
+            <div class="company-marker" style="top: 15%; left: 50%;"  data-company="3">BD</div>
+            <div class="company-marker" style="top: 15%; left: 60%;"  data-company="4">ESZ</div>
+            <div class="company-marker" style="top: 40%; left: 35%;"  data-company="5">SZA</div>
+            <div class="company-marker" style="top: 40%; left: 45%;" data-company="6">NO</div>
+            <div class="company-marker" style="top: 40%; left: 55%;" data-company="7">RE</div>
+            <div class="company-marker" style="top: 75%; left: 30%;" data-company="8">BA</div>
+            <div class="company-marker" style="top: 75%; left: 45%;" data-company="9">HO</div>
+            <div class="company-marker" style="top: 75%; left: 55%;" data-company="10">PA</div>
+            <div class="company-marker" style="top: 50%; left: 55%;"  data-company="11">BV</div>
+            <div class="company-marker" style="top: 45%; left: 15%;" data-company="12">TŰ</div>
+            <div class="company-marker" style="top: 75%; left: 40%;" data-company="13">MSG</div>
+            <div class="company-marker" style="top: 75%; left: 60%;" data-company="14">ZE</div>
+            <div class="company-marker" style="top: 45%; left: 80%;" data-company="15">SZP</div>
+            <div class="company-marker" style="top: 60%; left: 15%;" data-company="16">RE²</div>
+            <div class="company-marker" style="top: 75%; left: 35%;" data-company="17">MC</div>
+            <div class="company-marker" style="top: 75%; left: 50%;" data-company="18">PÖ</div>
+            <div class="company-marker" style="top: 50%; left: 35%;" data-company="19">MU</div>
+            <div class="company-marker" style="top: 50%; left: 45%;" data-company="20">MOM</div>
+           
+           
+        </div>
+        <section id="ceglista" aria-label="Cégek listája">
+
+          <article class="cegcard" id="ceg-mszgepesz">
+            <img src="images/ge1.jpg" alt="Mátészalkai Szakképzési Centrum Gépészeti Technikum és Kollégium logó" class="logo" />
+            <h3>Mátészalkai SzC Gépészeti Technikum</h3>
+            <p><strong>Cím:</strong> Mátészalka, Kölcsey u. 12, 4700</p>
+            <p><strong>Kapcsolattartó:</strong> Fejér Gábor Zoltán</p>
+            <p><strong>Telefon:</strong> +36 44 500 185</p>
+            <p><strong>Email:</strong> mszgepesz@gmail.com</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/ge1.jpg","images/ge2.jpg","images/ge3.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-deri">
+            <img src="images/de1.jpg" alt="Mátészalkai SzC Déri Miksa Technikum logó" class="logo" />
+            <h3>Déri Miksa Technikum</h3>
+            <p><strong>Cím:</strong> 4702 Mátészalka, Baross László utca 9-11</p>
+            <p><strong>Kapcsolattartó:</strong> Májer János Zsolt</p>
+            <p><strong>Telefon:</strong> +36 44 312 657</p>
+            <p><strong>Email:</strong> mszc.derimiksa@gmail.com</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/de1.jpg","images/de2.jpg","images/de3.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-budai">
+            <img src="images/bd.jpg" alt="Mátészalkai SzC Budai Nagy Antal Technikum logó" class="logo" />
+            <h3>Budai Nagy Antal Technikum</h3>
+            <p><strong>Cím:</strong> 4320 Nagykálló, Korányi Frigyes út 27</p>
+            <p><strong>Kapcsolattartó:</strong> Szabóné Lipkovics Ildikó</p>
+            <p><strong>Telefon:</strong> +36 42 263 104</p>
+            <p><strong>Email:</strong> lipkovicsildiko@gmail.com</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/bd1.jpg","images/bd2.jpg","images/bd3.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-baross">
+            <img src="images/ba.jpg" alt="Északi ASzc Baross László Mezőgazdasági Technikum logó" class="logo" />
+            <h3>Baross László Mezőgazdasági Technikum</h3>
+            <p><strong>Cím:</strong> 4700 Mátészalka, Baross László út 12-14</p>
+            <p><strong>Kapcsolattartó:</strong> Kovács István</p>
+            <p><strong>Telefon:</strong> 30/465-37-54</p>
+            <p><strong>Email:</strong> baross.titkarsag@easzc.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/ba.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-mcdonalds">
+            <img src="images/mc.jpg" alt="McDonald's logó" class="logo" />
+            <h3>McDonald's</h3>
+            <p><strong>Cím:</strong> Mátészalka, Alkotmány út 1/A, 4700</p>
+            <p><strong>Kapcsolattartó:</strong> Kis Szabó</p>
+            <p><strong>Telefon:</strong> —</p>
+            <p><strong>Email:</strong> munka@kisszabo.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/mc1.jpg","images/mc2.jpg","images/mc3.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-nobilis">
+            <img src="images/no.jpg" alt="Nobilis logó" class="logo" />
+            <h3>Nobilis</h3>
+            <p><strong>Cím:</strong> Mátészalka, Almáskert u. 14, 4700</p>
+            <p><strong>Kapcsolattartó:</strong> Novák Tiborné</p>
+            <p><strong>Telefon:</strong> +36 30 653 8320</p>
+            <p><strong>Email:</strong> webshop@nobilis.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/no.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-mom">
+            <img src="images/mom.jpg" alt="MOM Zrt. logó" class="logo" />
+            <h3>MOM Zrt.</h3>
+            <p><strong>Cím:</strong> 4700 Mátészalka, Ipari út 16</p>
+            <p><strong>Kapcsolattartó:</strong> Hegyi Tamás</p>
+            <p><strong>Telefon:</strong> +36 30 206 5879</p>
+            <p><strong>Email:</strong> info@momzrt.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/mom.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-hoya">
+            <img src="images/ho.jpg" alt="Hoya logó" class="logo" />
+            <h3>Hoya</h3>
+            <p><strong>Cím:</strong> Mátészalka, Ipari út 18, 4700</p>
+            <p><strong>Kapcsolattartó:</strong> Jens Kussat</p>
+            <p><strong>Telefon:</strong> (06 44) 418 200</p>
+            <p><strong>Email:</strong> HMHU-hoya@hoya.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/ho.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-pottyos">
+            <img src="images/pö.jpg" alt="Pöttyös logó" class="logo" />
+            <h3>Pöttyös</h3>
+            <p><strong>Cím:</strong> Mátészalka, Jármi út 24</p>
+            <p><strong>Kapcsolattartó:</strong> Szautner Péter</p>
+            <p><strong>Telefon:</strong> 06 40 350 350</p>
+            <p><strong>Email:</strong> vevoszolgalat@frieslandcampina.com</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/pö.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-parmen">
+            <img src="images/pa.jpg" alt="Parmen Konzervipari Zrt logó" class="logo" />
+            <h3>Parmen Konzervipari Zrt.</h3>
+            <p><strong>Cím:</strong> 4722 Nyírmeggyes, Fehér tag 1171/1</p>
+            <p><strong>Kapcsolattartó:</strong> Széll István</p>
+            <p><strong>Telefon:</strong> +36 44 509 036</p>
+            <p><strong>Email:</strong> parmenkonzerv@parmen.hu</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/pa.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-msg">
+            <img src="images/msg.jpg" alt="MSG Kft. logó" class="logo" />
+            <h3>MSG Kft.</h3>
+            <p><strong>Cím:</strong> 4700 Mátészalka, Jármi út 55</p>
+            <p><strong>Kapcsolattartó:</strong> Keresztes László Mihály</p>
+            <p><strong>Telefon:</strong> +36 44 500 860</p>
+            <p><strong>Email:</strong> msgkft@msgkft.com</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/msg.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-rend">
+            <img src="images/re.jpg" alt="Rendőrség logó" class="logo" />
+            <h3>Rendőrség</h3>
+            <p><strong>Cím:</strong> —</p>
+            <p><strong>Kapcsolattartó:</strong> —</p>
+            <p><strong>Telefon:</strong> —</p>
+            <p><strong>Email:</strong> —</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/re.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+          <article class="cegcard" id="ceg-tuzolto">
+            <img src="images/tu.jpg" alt="Tűzoltóság logó" class="logo" />
+            <h3>Tűzoltóság</h3>
+            <p><strong>Cím:</strong> —</p>
+            <p><strong>Kapcsolattartó:</strong> —</p>
+            <p><strong>Telefon:</strong> —</p>
+            <p><strong>Email:</strong> —</p>
+            <div class="mini-menu">
+              <button class="stand-btn" data-stand-images='["images/tu.jpg"]'>
+                Stand fotók
+              </button>
+            </div>
+          </article>
+        
+        </section>        
+
+</main>
+
+<!-- Szórólap kinagyítás -->
+<div id="szorolap-lightbox" role="dialog" aria-modal="true" aria-label="Szórólap kinagyítás">
+  <img src="" alt="Szórólap kinagyítás" />
+</div>
+
+<!-- Stand fotók kinagyítás -->
+<div id="stand-lightbox" role="dialog" aria-modal="true" aria-label="Stand fotók kinagyítása">
+  <button id="stand-prev" aria-label="Előző kép">&#10094;</button>
+  <img src="" alt="Stand fotó kinagyítás" />
+  <button id="stand-next" aria-label="Következő kép">&#10095;</button>
+</div>
+
+<script>
+  // SLIDESHOW JAVASCRIPT
+  const slides = document.getElementById('slides');
+  const imagesCount = slides.children.length;
+  let currentIndex = 0;
+
+  document.getElementById('next').addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % imagesCount;
+    updateSlidePosition();
+  });
+  document.getElementById('prev').addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + imagesCount) % imagesCount;
+    updateSlidePosition();
+  });
+
+  function updateSlidePosition() {
+    slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
+
+  // AUTOMATIKUS SLIDESHOW
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % imagesCount;
+    updateSlidePosition();
+  }, 5000);
+
+  // TOOLTIP ALAPRAJZON
+  const tooltip = document.getElementById('tooltip');
+  const logoButtons = document.querySelectorAll('.logo-btn');
+
+  logoButtons.forEach(btn => {
+    btn.addEventListener('mouseenter', (e) => {
+      const rect = e.target.getBoundingClientRect();
+      tooltip.style.left = rect.left + window.scrollX + 'px';
+      tooltip.style.top = rect.top + window.scrollY - 40 + 'px';
+      tooltip.innerHTML = `<strong>${btn.dataset.ceg}</strong><br>${btn.dataset.telephely}<br><em>${btn.dataset.szlogen}</em>`;
+      tooltip.style.display = 'block';
+    });
+    btn.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+    btn.addEventListener('click', () => {
+      // Ugrás az adott cég kártyájához
+      const cegId = 'ceg-ceg' + btn.dataset.ceg.replace(/\s/g, '');
+      const cegElem = document.getElementById(cegId);
+      if(cegElem) {
+        cegElem.scrollIntoView({behavior: 'smooth'});
+      }
+    });
+  });
+
+  // SZÓRÓLAP KINAGYÍTÁS
+  const szorolapLightbox = document.getElementById('szorolap-lightbox');
+  const szorolapImage = szorolapLightbox.querySelector('img');
+
+  document.querySelectorAll('.szorolap-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      szorolapImage.src = btn.dataset.szorolap;
+      szorolapLightbox.classList.add('active');
+    });
+    btn.addEventListener('mouseleave', () => {
+      szorolapLightbox.classList.remove('active');
+      szorolapImage.src = '';
+    });
+  });
+
+  szorolapLightbox.addEventListener('click', () => {
+    szorolapLightbox.classList.remove('active');
+    szorolapImage.src = '';
+  });
+
+  // STAND FOTÓK SLIDESHOW
+  const standLightbox = document.getElementById('stand-lightbox');
+  const standImg = standLightbox.querySelector('img');
+  const standPrev = document.getElementById('stand-prev');
+  const standNext = document.getElementById('stand-next');
+
+  let currentStandImages = [];
+  let currentStandIndex = 0;
+
+  document.querySelectorAll('.stand-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentStandImages = JSON.parse(btn.dataset.standImages);
+      currentStandIndex = 0;
+      standImg.src = currentStandImages[currentStandIndex];
+      standLightbox.classList.add('active');
+    });
+  });
+
+  standPrev.addEventListener('click', () => {
+    if(currentStandImages.length === 0) return;
+    currentStandIndex = (currentStandIndex - 1 + currentStandImages.length) % currentStandImages.length;
+    standImg.src = currentStandImages[currentStandIndex];
+  });
+
+  standNext.addEventListener('click', () => {
+    if(currentStandImages.length === 0) return;
+    currentStandIndex = (currentStandIndex + 1) % currentStandImages.length;
+    standImg.src = currentStandImages[currentStandIndex];
+  });
+
+  standLightbox.addEventListener('click', (e) => {
+    if(e.target === standLightbox) {
+      standLightbox.classList.remove('active');
+      currentStandImages = [];
+      standImg.src = '';
+    }
+  });
+
+</script>
+
+</body>
+</html>
